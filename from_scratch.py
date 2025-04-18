@@ -7,15 +7,15 @@ import pandas
 PATH = os.path.join('data', 'credit.csv')
 
 class Node: 
-    def __init__(self, feature=None, threshold=None, left=None, right=None, gain=None, entropy=None, value=None):
+    def __init__(self, feature=None, threshold=None, gain=None, entropy=None, value=None):
         self.entropy = 0
         self.feature = feature
         self.threshold = threshold
-        self.left = left
-        self.right = right
         self.gain = gain
         self.value = value
         self.entropy = entropy
+        self.left = None
+        self.right = None
 
     def print_info(self, features, classes):
         print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
@@ -40,14 +40,15 @@ class DecisionTree:
 
     def build_tree(self, dataset, depth):
         feature, threshold, left, right, gain = self.best_split(dataset)
-        e = self.entropy(dataset[:, -1])
+        entropy = self.entropy(dataset[:, -1])
         
         if depth >= self.max_depth or dataset.shape[0] < self.min_samples or gain == 0:
-            return Node(value=self.calculate_leaf_value(dataset[:, -1]), entropy=e)
+            return Node(value=self.calculate_leaf_value(dataset[:, -1]), entropy=entropy)
 
-        left = self.build_tree(left, depth + 1)
-        right = self.build_tree(right, depth + 1)
-        parent = Node(feature, threshold, left, right, gain, e)
+        
+        parent = Node(feature, threshold, gain, entropy)
+        parent.left = self.build_tree(left, depth + 1)
+        parent.right = self.build_tree(right, depth + 1)
         
         if depth == 0:
             self.root = parent
@@ -112,7 +113,7 @@ class DecisionTree:
             curr.print_info(features, classes)
             dfs(curr.left)
             dfs(curr.right)
-    
+
         dfs(self.root)
 
     def predict(self, x):
