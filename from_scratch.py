@@ -6,17 +6,6 @@ import pandas
 
 PATH = os.path.join('data', 'credit.csv')
 
-features_map = {
-    0: 'Credit History', 
-    1: 'Debt', 
-    2: 'Collateral'
-}
-
-classes_map = {
-    0: 'High', 
-    1: 'Low', 
-}
-
 class Node: 
     def __init__(self, feature=None, threshold=None, left=None, right=None, gain=None, entropy=None, value=None):
         self.entropy = 0
@@ -138,7 +127,17 @@ class DecisionTree:
 
 
 if __name__ == "__main__":
-    data = []
+    features_map = {
+    0: 'Credit History', 
+    1: 'Debt', 
+    2: 'Collateral'
+}
+
+    classes_map = {
+        0: 'High', 
+        1: 'Low', 
+    }
+
     with open(PATH, mode ='r') as file:
         df = pandas.read_csv(PATH)
 
