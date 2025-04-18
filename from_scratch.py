@@ -8,7 +8,6 @@ PATH = os.path.join('data', 'credit.csv')
 
 class Node: 
     def __init__(self, feature=None, threshold=None, gain=None, entropy=None, value=None):
-        self.entropy = 0
         self.feature = feature
         self.threshold = threshold
         self.gain = gain
@@ -36,7 +35,8 @@ class DecisionTree:
     
     def fit(self, x, y):
         dataset = np.concatenate((np.array(x), np.array(y).reshape(-1, 1)), axis=-1)
-        return self.build_tree(dataset, 0)
+        self.root = self.build_tree(dataset, 0)
+        return self.root
 
     def build_tree(self, dataset, depth):
         feature, threshold, left, right, gain = self.best_split(dataset)
@@ -45,13 +45,9 @@ class DecisionTree:
         if depth >= self.max_depth or dataset.shape[0] < self.min_samples or gain == 0:
             return Node(value=self.calculate_leaf_value(dataset[:, -1]), entropy=entropy)
 
-        
         parent = Node(feature, threshold, gain, entropy)
         parent.left = self.build_tree(left, depth + 1)
         parent.right = self.build_tree(right, depth + 1)
-        
-        if depth == 0:
-            self.root = parent
 
         return parent 
 
