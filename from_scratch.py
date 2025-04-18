@@ -12,7 +12,7 @@ features_map = {
     2: 'Collateral'
 }
 
-results_map = {
+classes_map = {
     0: 'High', 
     1: 'Low', 
 }
@@ -28,12 +28,12 @@ class Node:
         self.value = value
         self.entropy = entropy
 
-    def print_info(self):
+    def print_info(self, features, classes):
         print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
         if self.feature == None and self.threshold == None:
-            print(f'{results_map[self.value[0]]}')
+            print(f'{classes[self.value[0]]}')
         else:
-            print(f'{features_map[self.feature]} <= {self.threshold}')
+            print(f'{features[self.feature]} <= {self.threshold}')
             print(f"Information Gain: {self.gain: .2f}")
         print(f"Entropy: {self.entropy: .3f}")
         print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n")
@@ -115,16 +115,27 @@ class DecisionTree:
         prob = np.array(np.unique(arr, return_counts=True, axis=0))[1, :] / arr.shape[0]
         return -(prob * np.log2(prob)).sum()
     
-    def print_info(self):
+    def print_info(self, features, classes):
         def dfs(curr):
             if curr == None:
                 return
 
-            curr.print_info()
+            curr.print_info(features, classes)
             dfs(curr.left)
             dfs(curr.right)
     
         dfs(self.root)
+
+    def predict(self, x):
+        def dfs(node):
+            nonlocal x 
+            if not node.left and not node.right:
+                return node.value[0]
+
+            return dfs(node.left) if x[node.feature] <= node.threshold else dfs(node.right)
+
+        return dfs(self.root)
+
 
 if __name__ == "__main__":
     data = []
@@ -142,11 +153,8 @@ if __name__ == "__main__":
 
         tree = DecisionTree()
         tree.fit(X, Y)
-        tree.print_info()
+        tree.print_info(features_map, classes_map)
+        print(classes_map[tree.predict(np.array([1, 0, 0]))])
+        print(classes_map[tree.predict(np.array([2, 1, 0]))])
 
-
-
-
-        
-    print()
         
