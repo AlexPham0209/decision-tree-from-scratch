@@ -1,0 +1,15 @@
+No.,Credit History,Debt,Collateral,Credit Risk?
+1,bad,high,none,high
+2,unknown,high,none,high
+3,unknown,low,none,high
+4,unknown,low,none,high
+5,unknown,low,none,low
+6,unknown,low,adequate,low
+7,bad,low,none,high
+8,bad,low,adequate,high
+9,good,low,none,low
+10,good,high,adequate,low
+11,good,high,none,high
+12,good,high,none,low
+13,good,high,none,low
+14,bad,high,none,high
