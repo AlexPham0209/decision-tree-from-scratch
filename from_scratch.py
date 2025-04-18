@@ -18,19 +18,25 @@ results_map = {
 }
 
 class Node: 
-    def __init__(self, feature=None, threshold=None, left=None, right=None, gain=None, value=None):
+    def __init__(self, feature=None, threshold=None, left=None, right=None, gain=None, entropy=None, value=None):
+        self.entropy = 0
         self.feature = feature
         self.threshold = threshold
         self.left = left
         self.right = right
         self.gain = gain
         self.value = value
+        self.entropy = entropy
 
     def print_info(self):
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
         if self.feature == None and self.threshold == None:
-            print(f'Node: {results_map[self.value[0]]}\n')
+            print(f'{results_map[self.value[0]]}')
         else:
-            print(f'Node: {features_map[self.feature]} <= {self.threshold}\n')
+            print(f'{features_map[self.feature]} <= {self.threshold}')
+            print(f"Information Gain: {self.gain: .2f}")
+        print(f"Entropy: {self.entropy: .3f}")
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n")
             
         
 class DecisionTree:
@@ -45,14 +51,14 @@ class DecisionTree:
 
     def build_tree(self, dataset, depth):
         feature, threshold, left, right, gain = self.best_split(dataset)
-        
+        e = self.entropy(dataset[:, -1])
         
         if depth >= self.max_depth or dataset.shape[0] < self.min_samples or gain == 0:
-            return Node(value=self.calculate_leaf_value(dataset[:, -1]))
+            return Node(value=self.calculate_leaf_value(dataset[:, -1]), entropy=e)
 
         left = self.build_tree(left, depth + 1)
         right = self.build_tree(right, depth + 1)
-        parent = Node(feature, threshold, left, right, gain)
+        parent = Node(feature, threshold, left, right, gain, e)
         
         if depth == 0:
             self.root = parent
